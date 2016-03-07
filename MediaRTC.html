@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+        var myPeerConnection;
+        var remotePeerConnection;
+        var PeerConnection=window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+        var Sessiondescription= window.RTCSessionDescription || window.mozRTCSessionDescription || window.webkitRTCSessionDescription;
+
+        navigator.getWebcam=(navigator.getUserMedia ||
+        navigator.webkitGetUserMedia ||
+        navigator.mozGetUserMedia
+        )
+        navigator.getWebcam(
+        {video:true,audio:true},
+        gotWebcam,
+                function(err){
+                    console.log(err);
+                }
+        )
+
+        var localStream ;
+        function gotWebcam(stream){
+            var localVideo = document.getElementById('localVideo');
+            localVideo.src=window.URL.createObjectURL(stream);
+            localVideo.play();
+
+            /*window.AudioContext = window.AudioContext || window.webkitAudioContext;
+            var audioContext = new AudioContext();
+
+            // Create an AudioNode from the stream
+            var mediaStreamSource = audioContext.createMediaStreamSource(stream);*/
+            localStream = stream;
+
+            var video_track=stream.getVideoTracks()[0];
+            var output=document.getElementById("output")
+            output.innerHTML="Stream Id" + stream.id;
+            output.innerHTML="ready State" + video_track.readyState;
+            output.innerHTML="track id" + video_track.id;
+            output.innerHTML="Kind " + video_track.kind;
+
+            creaatePeerConnection(stream)
+        }
+
+        function creaatePeerConnection(stream){
+            myPeerConnection=new PeerConnection(null);
+            remotePeerConnection=new PeerConnection(null);
+
+            //listen to ICE Candidate on both
+            myPeerConnection.onicecandidate=gotMyIceCandidate;
+            remotePeerConnection.onicecandidate=gotRemoteIceCandidate;
+
+            //Handle streams of each peer
+            myPeerConnection.addStream(stream);
+            remotePeerConnection.onaddStream=gotRemoteStream;
+
+            //Create local peer connection offer
+            myPeerConnection.createOffer(gotLocalDescription);
+
+
+        }
+        function gotMyIceCandidate(event){
+            if(event.candidate){
+                remotePeerConnection.addIceCandidate(new RTCIceCandidate(event.candidate))
+            }
+        }
+
+        function gotRemoteIceCandidate(event){
+            if(event.candidate){
+                myPeerConnection.addIceCandidate(new RTCIceCandidate(event.candidate))
+            }
+        }
+
+        function gotRemoteStream(event){
+            var remoteVideo = document.getElementById('theriVideo');
+            remoteVideo.src=window.URL.createObjectURL(eventstream);
+            //remoteVideo.play();
+        }
+
+        function gotLocalDescription(description){
+            myPeerConnection.setLocalDescription(description)
+            remotePeerConnection.setRemoteDescription(description)
+            remotePeerConnection.createAnswer(gotRemoteDesciption);
+
+        }
+
+        function gotRemoteDesciption(description){
+            remotePeerConnection.setLocalDescription(description)
+            myPeerConnection.setRemoteDescription(description)
+        }
+    </script>
+</head>
+<body>
+
+<video id="localVideo" style="width: 480px;"></video>
+<video id="theriVideo" style="width: 480px; " autoplay></video>
+<div id="output"></div>
+
+Numb server  Free Numb TURN Server
+</body>
+</html>

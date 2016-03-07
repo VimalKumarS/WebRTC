@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> WebRTC Fundamental - PeerJS </title>
+    <link href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.0/jquery.js" type="application/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.14/peer.js" type="application/javascript"></script>
+    <script src="webrtcpeer.js"></script>
+</head>
+<body>
+
+<div id="video-container">
+    your friends <video id="their-video" autoplay class="their-video"></video>
+
+    <video id="my-video" autoplay muted="false" class="my-video"></video>
+</div>
+
+<div>
+    <a href="#" id="step1-retry" class="button"></a>
+</div>
+
+<div>
+    Your id= <span id="my-id">...</span>
+
+    Make a Call
+    <input type="text" id="call-toid">
+    <a href="#" id="make-call">call</a>
+</div>
+
+<div>
+    currently in call with id= <span id="thier-id">...</span>
+    <a href="#" id="end-call">End Call</a>
+</div>
+</body>
+</html>
